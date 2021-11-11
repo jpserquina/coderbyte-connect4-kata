@@ -15,7 +15,7 @@ gave myself 3 hours to come up with an elegant solve; took me a week to
 create a solution that flows well and is readable.
 
 this specific challenge is **_not_** a good test of on-your-feet development IMO;
-the solution begs for one to know it beforehand, and off-by-one errors will
+the challenge begs for one to know the solution beforehand, and off-by-one errors will
 eat into what little development time is given. if the scenario here was to
 emulate a high-stress coding session, then it would have achieved said goal,
 but doing this in the context of projects for the fintech space makes the 
