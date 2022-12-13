@@ -22,7 +22,7 @@ public class ConnectFour {
         };
 
         // turn board string into columns, and do guard check
-        rows = splitString(input, intHeight);
+        rows = splitString(input);
         columns = new ArrayList<>(intHeight);
         for (int i = 0; i < intHeight; i++) {
             columns.add(i, new Column(""));
@@ -65,10 +65,10 @@ public class ConnectFour {
         String result = "";
 
         for (Column column : columns) {
-            result = result.concat("`" + column.getValue() + "` (length = " + column.getValue().length() + "), ");
+            result = result.concat("`" + column.getValue() + "` (length = " + column.getValue().length() + "), \n");
         }
 
-        return result.substring(0, result.length() - 2);
+        return result.substring(0, result.length() - 3);
     }
 
     /**
@@ -89,62 +89,20 @@ public class ConnectFour {
                 break;
             }
             for (int j = 0; j < intHeight; j++) {
-//                System.out.println("debug: vertical: i=" + i + ", j=" + j);
-                if (columns.get(i).charAt(j).equals(disc) &&
-                        columns.get(i).charAt(j + 1).equals(disc) &&
-                        columns.get(i).charAt(j + 2).equals(disc) &&
-                        columns.get(i).charAt(j + 3).equals(disc)) {
+                if (checkVerticalForWin(columns, i, j, disc)) {
+                    System.out.println("debug: vertical: i=" + i + ", j=" + j);
                     result = true;
                     break;
                 }
-            }
-        }
 
-        // horizontal
-        for (int i = 0; i < intWidth; i++) {
-            if (result) {
-                break;
-            }
-            for (int j = 0; j < intHeight; j++) {
-//                System.out.println("debug: horizontal: i=" + i + ", j=" + j);
-                if (columns.get(i).charAt(j).equals(disc) &&
-                        columns.get(i + 1).charAt(j).equals(disc) &&
-                        columns.get(i + 2).charAt(j).equals(disc) &&
-                        columns.get(i + 3).charAt(j).equals(disc)) {
+                if (checkHorizontalForWin(columns, i, j, disc)) {
+                    System.out.println("debug: horizontal: i=" + i + ", j=" + j);
                     result = true;
                     break;
                 }
-            }
-        }
 
-        // ascending diagonal
-        for (int i = 0; i < intWidth; i++) {
-            if (result) {
-                break;
-            }
-            for (int j = 0; j < intHeight; j++) {
-//                System.out.println("debug: ascending diagonal: i=" + i + ", j=" + j);
-                if (columns.get(i).charAt(j).equals(disc) &&
-                        columns.get(i - 1).charAt(j + 1).equals(disc) &&
-                        columns.get(i - 2).charAt(j + 2).equals(disc) &&
-                        columns.get(i - 3).charAt(j + 3).equals(disc)) {
-                    result = true;
-                    break;
-                }
-            }
-        }
-
-        // descending diagonal
-        for (int i = 0; i < intWidth; i++) {
-            if (result) {
-                break;
-            }
-            for (int j = 0; j < intHeight; j++) {
-//                System.out.println("debug: descending diagonal: i=" + i + ", j=" + j);
-                if (columns.get(i).charAt(j).equals(disc) &&
-                        columns.get(i - 1).charAt(j - 1).equals(disc) &&
-                        columns.get(i - 2).charAt(j - 2).equals(disc) &&
-                        columns.get(i - 3).charAt(j - 3).equals(disc)) {
+                if (checkDiagonalForWin(columns, i, j, disc)) {
+                    System.out.println("debug: diagonal: i=" + i + ", j=" + j);
                     result = true;
                     break;
                 }
@@ -156,18 +114,77 @@ public class ConnectFour {
 
     /**
      *
+     * @param columns array of columns
+     * @param i column
+     * @param j row
+     * @param disc disc
+     * @return if disc is found at column-row
+     */
+    private static boolean piece(ArrayList<Column> columns, int i, int j, String disc) {
+        return columns.get(i).charAt(j).equals(disc);
+    }
+
+    /**
+     *
+     * @param columns array of columns
+     * @param i column
+     * @param j row
+     * @param disc disc
+     * @return if we win vertically
+     */
+    private static boolean checkVerticalForWin(ArrayList<Column> columns, int i, int j, String disc) {
+        return j + 3 <= intHeight &&
+                piece(columns, i, j, disc) &&
+                piece(columns, i, j + 1, disc) &&
+                piece(columns, i, j + 2, disc) &&
+                piece(columns, i, j + 3, disc);
+    }
+
+    /**
+     *
+     * @param columns array of columns
+     * @param i column
+     * @param j row
+     * @param disc disc
+     * @return if we win horizontally
+     */
+    private static boolean checkHorizontalForWin(ArrayList<Column> columns, int i, int j, String disc) {
+        return i + 3 <= intWidth &&
+                piece(columns, i, j, disc) &&
+                piece(columns, i + 1, j, disc) &&
+                piece(columns, i + 2, j, disc) &&
+                piece(columns, i + 3, j, disc);
+    }
+
+    /**
+     *
+     * @param columns array of columns
+     * @param i column
+     * @param j row
+     * @param disc disc
+     * @return if we win diagonally
+     */
+    private static boolean checkDiagonalForWin(ArrayList<Column> columns, int i, int j, String disc) {
+        return i + 3 <= intWidth &&
+                j + 3 <= intHeight &&
+                piece(columns, i, j, disc) &&
+                piece(columns, i + 1, j + 1, disc) &&
+                piece(columns, i + 2, j + 2, disc) &&
+                piece(columns, i + 3, j + 3, disc);
+    }
+
+    /**
      * @param input board string
-     * @param chunks length of substring
      * @return ArrayList<String> raw rows
      */
-    public static ArrayList<String> splitString(String input, int chunks) {
+    private static ArrayList<String> splitString(String input) {
         ArrayList<String> result = new ArrayList<>();
         int inputIndex = 0;
         int inputLength = input.length();
 
         while (inputIndex < inputLength) {
-            result.add(input.substring(inputIndex, inputIndex + chunks));
-            inputIndex += chunks;
+            result.add(input.substring(inputIndex, inputIndex + ConnectFour.intHeight));
+            inputIndex += ConnectFour.intHeight;
         }
 
         return result;
